@@ -1,15 +1,29 @@
 import numpy as np
 
 class GraphAgent:
-    def __init__(self, c, stages, nodes,total_nodes):
+    def __init__(self, c, stages, nodes, total_nodes):
         self.stages = stages
         self.nodes = nodes
         self.total_nodes = total_nodes
         self.ci = c
 
-        # self.c = np.full((self.total_nodes, self.total_nodes),1000)
+
         # self.ccost = np.zeros((self.total_nodes ,))  # array that holds the cost from 1 node to another (each possition is a node)
-        # self.d = np.zeros((self.total_nodes ,))
+        self.d = [[0 for k in range(self.nodes[j])] for j in range(self.stages)]
+        # for i in range(self.stages):
+        #     di = []
+        #     for j in range(int(self.nodes[i])):
+        #         di.append(0)
+        #     self.d.append(di)
+
+        self.cost = [[0 for k in range(self.nodes[j])] for j in range(self.stages)]
+        # for i in range(self.stages):
+        #     costi = []
+        #     for j in range(int(self.nodes[i])):
+        #         costi.append(0)
+        #     self.cost.append(di)
+        print(self.cost)
+
         # self.path = np.zeros((self.total_nodes ,))
 
     # function to create the dynamic area
@@ -30,9 +44,22 @@ class GraphAgent:
 
 
     def calculate(self):
-        self.cost[self.total_nodes] = 0
-        for i in range(self.total_nodes - 1, 1, -1):
-            min = 1000
+        for i in range(self.stages - 2, 0, -1):
+            for j in range(int(self.nodes[i])):
+                min = 1000
+                for k in range(int(self.nodes[i+1])):
+                    # print('%d || %d || %d' %( i,j, k))
+                    if c[i][j][k] + self.cost[i][j] < min:
+                        min = c[i][j][k] + self.cost[i][j]
+                        self.d[i][j] = k
+                self.cost[i][j] = min
+
+        for i in range(self.stages):
+            for j in range(int(self.nodes[i])):
+                print('%d\t%d %d' % (self.cost[i][j], i +1, self.d[i][j]))
+
+
+
 
 
     def print_graph(self):
@@ -46,13 +73,13 @@ class GraphAgent:
 
 def menu():
     stages = int(input('Stages: \n'))
-    nodes = np.zeros((stages,))
-    nodes[0] = 1
+    nodes = []
+    nodes.append(1)
     num_nodes = 1
     c = []
 
     for i in range(1, stages):
-        nodes[i] = int(input('Nodes for stage %d:' %i))
+        nodes.append(int(input('Nodes for stage %d:' % i)))
         num_nodes += nodes[i]
     for i in range(stages - 1):
         cost = []
@@ -70,6 +97,7 @@ if __name__ == '__main__':
     c, stages, nodes, num_nodes = menu()
     agent = GraphAgent(c, stages, nodes, num_nodes)
     agent.print_graph()
+    agent.calculate()
     print('==========================================================================')
 
 
