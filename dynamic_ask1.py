@@ -44,19 +44,19 @@ class GraphAgent:
 
 
     def calculate(self):
-        for i in range(self.stages - 2, 0, -1):
-            for j in range(int(self.nodes[i])):
+        for i in range(self.stages - 2, -1, -1):
+            for j in range(self.nodes[i]):
                 min = 1000
                 for k in range(int(self.nodes[i+1])):
                     # print('%d || %d || %d' %( i,j, k))
-                    if c[i][j][k] + self.cost[i][j] < min:
-                        min = c[i][j][k] + self.cost[i][j]
-                        self.d[i][j] = k
+                    if c[i][j][k] + self.cost[i+1][k] < min:
+                        min = c[i][j][k] + self.cost[i+1][k]
+                        self.d[i][j] = i+1, k
                 self.cost[i][j] = min
         # 3
         for i in range(self.stages):
             for j in range(int(self.nodes[i])):
-                print('%d\t%d %d' % (self.cost[i][j], i +1, self.d[i][j]))
+                print('%d\t%d %d \t%s' % (self.cost[i][j], i, j, self.d[i][j]))
 
 
 
@@ -94,7 +94,11 @@ def menu():
 
 
 if __name__ == '__main__':
-    c, stages, nodes, num_nodes = menu()
+    # c, stages, nodes, num_nodes = menu()
+    c = [[[2, 3]], [[5, 1, 1000], [1000, 1000, 3]], [[6, 1000], [3, 2], [1000, 4]]]
+    stages = 4
+    nodes = [1, 2, 3, 2]
+    num_nodes = 9
     agent = GraphAgent(c, stages, nodes, num_nodes)
     agent.print_graph()
     agent.calculate()
