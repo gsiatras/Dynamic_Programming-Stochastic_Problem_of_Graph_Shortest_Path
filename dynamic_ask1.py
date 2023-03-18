@@ -53,7 +53,7 @@ class GraphAgent:
                         min = c[i][j][k] + self.cost[i][j]
                         self.d[i][j] = k
                 self.cost[i][j] = min
-
+        # 3
         for i in range(self.stages):
             for j in range(int(self.nodes[i])):
                 print('%d\t%d %d' % (self.cost[i][j], i +1, self.d[i][j]))
