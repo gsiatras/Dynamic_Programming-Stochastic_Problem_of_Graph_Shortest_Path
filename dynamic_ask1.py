@@ -13,7 +13,7 @@ class GraphAgent:
         self.path = np.zeros((total_nodes + 1,))
 
     # function to create the dynamic area
-    def dynamic_array(self):
+    def dynamic_array(self):ds
         for i in range(self.total_nodes):
 
 
