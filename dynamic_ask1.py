@@ -7,16 +7,22 @@ class GraphAgent:
         self.cost = cost
         self.total_nodes = total_nodes
 
+        self.c = [[np.zeros((total_nodes + 1,))] for j in range(total_nodes + 1)]
         self.ccost = np.zeros((total_nodes + 1,))  # array that holds the cost from 1 node to another (each possition is a node)
         self.d = np.zeros((total_nodes + 1,))
         self.path = np.zeros((total_nodes + 1,))
+
+    # function to create the dynamic area
+    def dynamic_array(self):
+        for i in range(self.total_nodes):
+
+
+
 
     def calculate(self):
         self.cost[self.total_nodes] = 0
         for i in range(self.total_nodes - 1, 1, -1):
             min = 1000
-
-
 
 
     def print_graph(self):
@@ -28,8 +34,6 @@ class GraphAgent:
                 for k in range(int(self.nodes[i + 1])):
                     print('%d\t\t %d\t\t\t %d\t\t %d\t\t %d' % (i, j, i + 1, k, self.cost[c][k]))
                 c += 1
-
-
 
 
 def menu():
