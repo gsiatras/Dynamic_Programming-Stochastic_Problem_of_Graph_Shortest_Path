@@ -7,41 +7,12 @@ class GraphAgent:
         self.total_nodes = total_nodes
         self.ci = c
 
-
-        # self.ccost = np.zeros((self.total_nodes ,))  # array that holds the cost from 1 node to another (each possition is a node)
         self.d = [[0 for k in range(self.nodes[j])] for j in range(self.stages)]
-        # for i in range(self.stages):
-        #     di = []
-        #     for j in range(int(self.nodes[i])):
-        #         di.append(0)
-        #     self.d.append(di)
-
         self.cost = [[0 for k in range(self.nodes[j])] for j in range(self.stages)]
-        # for i in range(self.stages):
-        #     costi = []
-        #     for j in range(int(self.nodes[i])):
-        #         costi.append(0)
-        #     self.cost.append(di)
-        print(self.cost)
+        self.path = [0 for j in range(self.stages)]
+        # print(self.cost)
 
         # self.path = np.zeros((self.total_nodes ,))
-
-    # function to create the dynamic area
-    # def dynamic_array(self):
-    #     k = 1
-    #     for i in range(self.total_nodes):
-    #         for j in self.cost[i]:
-    #             if self.cost[i][j] < 1000:
-    #                 self.c[i][k] = self.cost[i][j]
-    #             k += 1
-    #
-    #     for i in range(self.stages - 1):
-    #         for j in range(int(self.nodes[i])):
-    #             for k in range(int(self.nodes[i + 1])):
-    #             c += 1
-
-
-
 
     def calculate(self):
         for i in range(self.stages - 2, -1, -1):
@@ -51,20 +22,23 @@ class GraphAgent:
                     # print('%d || %d || %d' %( i,j, k))
                     if c[i][j][k] + self.cost[i+1][k] < min:
                         min = c[i][j][k] + self.cost[i+1][k]
-                        self.d[i][j] = i+1, k
+                        self.d[i][j] = k
                 self.cost[i][j] = min
-        # 3
+        # find sortest path
+        self.path[0] = 0
+        for i in range(1, self.stages):
+            self.path[i]= self.d[i-1][self.path[i-1]]
+        print(self.d)
+        # print result
+        print('Current: \t\t\t To: \nStage:\tNode:\t\tStage:\tNodes:\tCost to end:')
         for i in range(self.stages):
             for j in range(int(self.nodes[i])):
-                print('%d\t%d %d \t%s' % (self.cost[i][j], i, j, self.d[i][j]))
-
-
-
-
+                print(' %d\t\t %d\t\t\t %d\t\t %d\t\t %d' % (i, j, i+1, self.d[i][j], self.cost[i][j]))
+        print(self.path)
 
     def print_graph(self):
         c = 0
-        print('Graph: \n')
+        print('Graph: ')
         print('Current: \t\t\t To: \nStage:\t Node:\t\t Stage:\t Node:\t Cost:')
         for i in range(self.stages - 1):
             for j in range(int(self.nodes[i])):
