@@ -1,10 +1,9 @@
 import numpy as np
 
 class GraphAgent:
-    def __init__(self, c, stages, nodes, total_nodes):
+    def __init__(self, c, stages, nodes):
         self.stages = stages
         self.nodes = nodes
-        self.total_nodes = total_nodes
         self.ci = c
 
         self.d = [[0 for k in range(self.nodes[j])] for j in range(self.stages)]
@@ -12,8 +11,26 @@ class GraphAgent:
         self.path = [0 for j in range(self.stages)]
         # print(self.cost)
 
-        # self.path = np.zeros((self.total_nodes ,))
+    def printer(self):
+        print('============================Graph===============================')
+        self.print_graph()
+        print('================================================================')
+        print('------------------Path and cost for every node------------------')
+        # print path and cost for every node
+        print('Current: \t\t\t To: \nStage:\tNode:\t\tStage:\tNodes:\tCost to end:')
+        for i in range(self.stages - 1):
+            for j in range(int(self.nodes[i])):
+                print(' %d\t\t %d\t\t\t %d\t\t %d\t\t %d' % (i, j, i + 1, self.d[i][j], self.cost[i][j]))
+        print('================================================================')
+        print('------------------Shortest Path and cost to end-----------------')
+        for k in range(self.stages):
+            if k == self.stages - 1:
+                print('(%d, %d)' % (k, self.path[k]))
+            else:
+                print('(%d, %d) =>'  % (k, self.path[k]))
+        print('Total cost: %d' % self.cost[0][0])
 
+    #  function to calculate sortest path
     def calculate(self):
         for i in range(self.stages - 2, -1, -1):
             for j in range(self.nodes[i]):
@@ -28,17 +45,12 @@ class GraphAgent:
         self.path[0] = 0
         for i in range(1, self.stages):
             self.path[i]= self.d[i-1][self.path[i-1]]
-        print(self.d)
-        # print result
-        print('Current: \t\t\t To: \nStage:\tNode:\t\tStage:\tNodes:\tCost to end:')
-        for i in range(self.stages):
-            for j in range(int(self.nodes[i])):
-                print(' %d\t\t %d\t\t\t %d\t\t %d\t\t %d' % (i, j, i+1, self.d[i][j], self.cost[i][j]))
-        print(self.path)
+        # print(self.d)
+        # print results
+        self.printer()
+        # print(self.path)
 
     def print_graph(self):
-        c = 0
-        print('Graph: ')
         print('Current: \t\t\t To: \nStage:\t Node:\t\t Stage:\t Node:\t Cost:')
         for i in range(self.stages - 1):
             for j in range(int(self.nodes[i])):
@@ -49,12 +61,10 @@ def menu():
     stages = int(input('Stages: \n'))
     nodes = []
     nodes.append(1)
-    num_nodes = 1
     c = []
 
     for i in range(1, stages):
         nodes.append(int(input('Nodes for stage %d:' % i)))
-        num_nodes += nodes[i]
     for i in range(stages - 1):
         cost = []
         for j in range(int(nodes[i])):
@@ -63,20 +73,28 @@ def menu():
                 node_cost.append(int(input('Cost from Stage %d Node %d to Stage %d Node %d:' % (i, j, i + 1, k))))
             cost.append(node_cost)
         c.append(cost)
-    return c, stages, nodes, num_nodes
+    return c, stages, nodes
 
 
 
 if __name__ == '__main__':
-    # c, stages, nodes, num_nodes = menu()
+    # c, stages, nodes= menu()
+    # graph1
     c = [[[2, 3]], [[5, 1, 1000], [1000, 1000, 3]], [[6, 1000], [3, 2], [1000, 4]]]
     stages = 4
     nodes = [1, 2, 3, 2]
-    num_nodes = 9
-    agent = GraphAgent(c, stages, nodes, num_nodes)
-    agent.print_graph()
+    # ipnut graph
+    stages = 7
+    nodes = [1, 3, 3, 3, 4, 3, 2]
+    c =[[[5, 7, 4]],
+        [[2, 1000, 1000], [1000, 3, 4], [6, 7, 5]],
+        [[7, 2, 1000], [3, 1, 2], [1000, 4, 2]],
+        [[4, 2, 1000, 6], [1000, 3, 1000, 1000], [5, 1000, 2, 4]],
+        [[5, 1000, 4], [1000, 6, 1000], [1000, 3, 1000], [1000, 1000, 3]],
+        [[7, 4], [8, 5], [6, 7]]]
+    agent = GraphAgent(c, stages, nodes)
     agent.calculate()
-    print('==========================================================================')
+
 
 
 
