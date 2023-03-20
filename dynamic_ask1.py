@@ -79,7 +79,7 @@ def menu():
 
 if __name__ == '__main__':
     # c, stages, nodes= menu()
-    # graph1
+    # test graph1
     c = [[[2, 3]], [[5, 1, 1000], [1000, 1000, 3]], [[6, 1000], [3, 2], [1000, 4]]]
     stages = 4
     nodes = [1, 2, 3, 2]
@@ -94,6 +94,13 @@ if __name__ == '__main__':
         [[7, 4], [8, 5], [6, 7]]]
     agent = GraphAgent(c, stages, nodes)
     agent.calculate()
+
+    while True:
+        print('============================New graph===========================')
+        c, stages, nodes = menu()
+        agent = GraphAgent(c, stages, nodes)
+        agent.calculate()
+
 
 
 
