@@ -55,7 +55,8 @@ class GraphAgent:
         for i in range(self.stages - 1):
             for j in range(int(self.nodes[i])):
                 for k in range(int(self.nodes[i + 1])):
-                    print('%d\t\t %d\t\t\t %d\t\t %d\t\t %d' % (i, j, i + 1, k, self.ci[i][j][k]))
+                    if self.ci[i][j][k] < 1000:
+                        print('%d\t\t %d\t\t\t %d\t\t %d\t\t %d' % (i, j, i + 1, k, self.ci[i][j][k]))
 
 def menu():
     stages = int(input('Stages: \n'))
@@ -80,9 +81,9 @@ def menu():
 if __name__ == '__main__':
     # c, stages, nodes= menu()
     # test graph1
-    c = [[[2, 3]], [[5, 1, 1000], [1000, 1000, 3]], [[6, 1000], [3, 2], [1000, 4]]]
-    stages = 4
-    nodes = [1, 2, 3, 2]
+    # c = [[[2, 3]], [[5, 1, 1000], [1000, 1000, 3]], [[6, 1000], [3, 2], [1000, 4]]]
+    # stages = 4
+    # nodes = [1, 2, 3, 2]
     # ipnut graph
     stages = 7
     nodes = [1, 3, 3, 3, 4, 3, 2]
