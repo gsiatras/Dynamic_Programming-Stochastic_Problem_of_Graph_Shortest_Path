@@ -44,7 +44,7 @@ class GraphAgent:
         # find sortest path
         self.path[0] = 0
         for i in range(1, self.stages):
-            self.path[i]= self.d[i-1][self.path[i-1]]
+            self.path[i] = self.d[i-1][self.path[i-1]]
         # print(self.d)
         # print results
         self.printer()
