@@ -13,6 +13,8 @@ class GraphAgent:
 
         self.d = [[0 for k in range(self.nodes[j])] for j in range(self.stages)]
         self.path = [0 for j in range(self.stages)]
+        self.Vnode = [[0 for k in range(self.nodes[j])] for j in
+                      range(self.stages)]  # array to store the value of each node
         # print(self.cost)
 
     def printer(self):
@@ -32,7 +34,7 @@ class GraphAgent:
                 print('(%d, %d)' % (k, self.path[k]))
             else:
                 print('(%d, %d) =>' % (k, self.path[k]))
-        print('Min cost: %d' % self.minCost)
+        print('Min cost: %f' % self.minCost)
 
     # function to find slip per route per stage
     def findpslip(self, stage, node):
@@ -41,8 +43,8 @@ class GraphAgent:
         for k in range(int(self.nodes[stage + 1])):
             if (self.c[stage][node][k] < 1000):
                 i += 1
-                if(self.c[stage][node][k] < m):
-                    m = c[stage][node][k]
+                if(self.c[stage][node][k] + self.Vnode[stage + 1][k] < m):
+                    m = self.c[stage][node][k]
                     best = k
 
         if i > 1:
@@ -60,8 +62,6 @@ class GraphAgent:
         Vtrans = [[[0 for l in range(self.nodes[j + 1])] for k in range(self.nodes[j])] for j in
                        range(self.stages - 1)]  # array to store the Value of moving from one node to another
 
-        Vnode = [[0 for k in range(self.nodes[j])] for j in
-                      range(self.stages)]  # array to store the value of each node
 
         for i in range(self.stages - 2, -1, -1):
             for j in range(self.nodes[i]):
@@ -69,6 +69,7 @@ class GraphAgent:
                 # calculate transition value for each node to the next
                 for k in range(int(self.nodes[i+1])):
                     total_v = 0
+                    min = 1000
                     # print('%d || %d || %d' %( i,j, k))
                     # 1000 = not route available
                     if self.c[i][j][k] == 1000:
@@ -77,27 +78,32 @@ class GraphAgent:
                     # if flag raised then we have multiple possible routes
                     if self.pflag == 1:
                         if k == best:
-                            Vtrans[i][j][k] = Vnode[i + 1][k] + self.c[i][j][k] * (1 - self.p)
+                            cost = c[i][j][k] * (1 - self.p)
+                            Vtrans[i][j][k] = self.Vnode[i + 1][k] + cost
                             total_v = Vtrans[i][j][k]
                         else:
-                            Vtrans[i][j][k] = Vnode[i + 1][k] + self.c[i][j][k] * (1 - pslip)
+                            cost = c[i][j][k] * (1 - pslip)
+                            Vtrans[i][j][k] = self.Vnode[i + 1][k] + cost
                             total_v = Vtrans[i][j][k]
                     else:
-                        Vtrans[i][j][k] = Vnode[i + 1][k] + self.c[i][j][k]
+                        Vtrans[i][j][k] = self.Vnode[i + 1][k] + self.c[i][j][k]
                         total_v += Vtrans[i][j][k]
                     # the value of the node
-                    Vnode[i][j] += total_v
+                    self.Vnode[i][j] += total_v
                 self.d[i][j] = np.argmin(Vtrans[i][j][:])
 
         # find best path
         self.path[0] = 0
         for i in range(0, self.stages-1):
             self.path[i+1] = np.argmin(Vtrans[i][self.path[i]][:])
-            self.minCost += self.c[i][self.path[i]][self.path[i+1]]
+            self.minCost += float(self.c[i][self.path[i]][self.path[i+1]]) * (1 - self.p)
+
+
         # print(self.d)
         # print results
         self.printer()
         # print(self.path)
+
     def print_graph(self):
         print('Current: \t\t\t To: \nStage:\t Node:\t\t Stage:\t Node:\t Cost:')
         for i in range(self.stages - 1):
