@@ -34,7 +34,7 @@ class GraphAgent:
                 print('(%d, %d)' % (k, self.path[k]))
             else:
                 print('(%d, %d) =>' % (k, self.path[k]))
-        print('Min cost: %f' % self.minCost)
+        print('Min cost: %f' % self.Vnode[0][0])
 
     # function to find slip per route per stage
     def findpslip(self, stage, node):
@@ -69,7 +69,6 @@ class GraphAgent:
                 # calculate transition value for each node to the next
                 for k in range(int(self.nodes[i+1])):
                     total_v = 0
-                    min = 1000
                     # print('%d || %d || %d' %( i,j, k))
                     # 1000 = not route available
                     if self.c[i][j][k] == 1000:
@@ -79,12 +78,11 @@ class GraphAgent:
                     if self.pflag == 1:
                         if k == best:
                             cost = c[i][j][k] * (1 - self.p)
-                            Vtrans[i][j][k] = self.Vnode[i + 1][k] + cost
-                            total_v = Vtrans[i][j][k]
+                            Vtrans[i][j][k] = (self.Vnode[i + 1][k] + c[i][j][k])
+                            total_v = Vtrans[i][j][k]* self.p
                         else:
-                            cost = c[i][j][k] * (1 - pslip)
-                            Vtrans[i][j][k] = self.Vnode[i + 1][k] + cost
-                            total_v = Vtrans[i][j][k]
+                            Vtrans[i][j][k] = (self.Vnode[i + 1][k] + c[i][j][k])
+                            total_v = Vtrans[i][j][k]*pslip
                     else:
                         Vtrans[i][j][k] = self.Vnode[i + 1][k] + self.c[i][j][k]
                         total_v += Vtrans[i][j][k]
@@ -96,7 +94,7 @@ class GraphAgent:
         self.path[0] = 0
         for i in range(0, self.stages-1):
             self.path[i+1] = np.argmin(Vtrans[i][self.path[i]][:])
-            self.minCost += float(self.c[i][self.path[i]][self.path[i+1]]) * (1 - self.p)
+            # self.minCost += float(self.c[i][self.path[i]][self.path[i+1]]) * self.p
 
 
         # print(self.d)
