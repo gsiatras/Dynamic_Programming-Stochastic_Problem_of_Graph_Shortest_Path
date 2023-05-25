@@ -43,10 +43,6 @@ class GraphAgent:
         for k in range(int(self.nodes[stage + 1])):
             if (self.c[stage][node][k] < 1000):
                 i += 1
-                if(self.c[stage][node][k] + self.Vnode[stage + 1][k] < m):
-                    m = self.c[stage][node][k]
-                    best = k
-
         if i > 1:
             self.pflag = 1
             pslipp = self.slipp/(i-1)
@@ -54,7 +50,7 @@ class GraphAgent:
             self.pflag = 0
             pslipp = 1
 
-        return pslipp, best
+        return pslipp
 
     #  function to calculate sortest path
     def calculate(self):
@@ -65,35 +61,41 @@ class GraphAgent:
 
         for i in range(self.stages - 2, -1, -1):
             for j in range(self.nodes[i]):
-                pslip, best = self.findpslip(i, j)
+                pslip = self.findpslip(i, j)
                 # calculate transition value for each node to the next
-                for k in range(int(self.nodes[i+1])):
-                    total_v = 0
-                    # print('%d || %d || %d' %( i,j, k))
-                    # 1000 = not route available
-                    if self.c[i][j][k] == 1000:
-                        Vtrans[i][j][k] = float('inf')
+                self.Vnode[i][j] = float('inf')
+                for x in range(int(self.nodes[i+1])):
+                    if self.c[i][j][x] == 1000:
                         continue
-                    # if flag raised then we have multiple possible routes
-                    if self.pflag == 1:
-                        if k == best:
-                            cost = c[i][j][k] * (1 - self.p)
-                            Vtrans[i][j][k] = (self.Vnode[i + 1][k] + c[i][j][k])
-                            total_v = Vtrans[i][j][k]* self.p
+                    best = x
+                    vnode = 0
+                    for k in range(int(self.nodes[i+1])):
+                        total_v = 0
+                        # print('%d || %d || %d' %( i,j, k))
+                        # 1000 = not route available
+                        if self.c[i][j][k] == 1000:
+                            Vtrans[i][j][k] = float('inf')
+                            continue
+                        # if flag raised then we have multiple possible routes
+                        if self.pflag == 1:
+                            if k == best:
+                                Vtrans[i][j][k] = (self.Vnode[i + 1][k] + c[i][j][k])
+                                total_v = Vtrans[i][j][k] * self.p
+                            else:
+                                Vtrans[i][j][k] = (self.Vnode[i + 1][k] + c[i][j][k])
+                                total_v = Vtrans[i][j][k]*pslip
                         else:
-                            Vtrans[i][j][k] = (self.Vnode[i + 1][k] + c[i][j][k])
-                            total_v = Vtrans[i][j][k]*pslip
-                    else:
-                        Vtrans[i][j][k] = self.Vnode[i + 1][k] + self.c[i][j][k]
-                        total_v += Vtrans[i][j][k]
-                    # the value of the node
-                    self.Vnode[i][j] += total_v
-                self.d[i][j] = np.argmin(Vtrans[i][j][:])
+                            Vtrans[i][j][k] = self.Vnode[i + 1][k] + self.c[i][j][k]
+                            total_v += Vtrans[i][j][k]
+                        # the value of the node
+                        vnode += total_v
+                    if self.Vnode[i][j] > vnode:
+                        self.Vnode[i][j] = vnode
+                        self.d[i][j] = x
 
-        # find best path
         self.path[0] = 0
-        for i in range(0, self.stages-1):
-            self.path[i+1] = np.argmin(Vtrans[i][self.path[i]][:])
+        for i in range(1, self.stages):
+            self.path[i] = self.d[i - 1][self.path[i - 1]]
             # self.minCost += float(self.c[i][self.path[i]][self.path[i+1]]) * self.p
 
 
